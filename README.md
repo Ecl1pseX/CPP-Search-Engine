@@ -1,2 +1,2 @@
 # CPP-Search-Engine
-A Trie based local search engine in C++
+A Trie structure based local search engine in C++
