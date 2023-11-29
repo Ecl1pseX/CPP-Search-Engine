@@ -38,4 +38,5 @@ int Mymap::insert(char* line,int i)
     strcpy(documents[i],token);
     token=NULL;
     free(token);
+    return 1;
 }

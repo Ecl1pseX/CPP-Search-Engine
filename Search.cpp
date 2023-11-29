@@ -41,6 +41,79 @@ void search(char* token,Trienode* trie,Mymap* map,int k)
         ceil=k;
     struct winsize w;
     ioctl(STDOUT_FILENO,TIOCGWINSZ,&w);
+    for(int l=0;l<ceil;l++) {
+        int id = heap->getid();
+        if(id==-1)
+            break;
+        
+        double score = (double)heap->remove();
+        cout<<"("<<id;
+        int x=10,f=l;
+        while(id/x!=0){
+            x*=10;
+            f++;
+        }
+        while(5-f>=0) {
+            cout << " ";
+            f++;
+        }
+        printf(")[%10.6f]",score);
+        char* line=(char*)malloc(map->getbuffersize()*sizeof(char));
+        strcpy(line,map->getDocument(id));
+        char* temp = strtok(line," \t\n");
+        int currlength=0, counter=0, newline=1,lineflag=0,underline[2][100], ucounter=0;
+        while(temp!=NULL){
+            if(newline){
+                currlength+=20;
+                if(counter!=0) {
+                    for(int co=0;co<20;co++) {
+                        cout << " ";
+                    }
+                }
+                newline=0;
+            }
+            for(int n=0;n<i;n++) {
+                if(!strcmp(warray[n],temp)) {
+                    if(currlength + strlen(temp)+1 <= w.ws_col) {
+                        underline[0][ucounter] = currlength;
+                        underline[1][ucounter] = strlen(temp);
+                        ucounter++;
+                        lineflag=1;
+                    }
+                    break;
+                }
+            }
+            currlength+=strlen(temp) +1;
+            if(currlength-1>=w.ws_col) {
+                currlength=0;
+                newline=1;
+                cout << endl;
+                if(lineflag) {
+                    char *outputline=(char*)malloc((w.ws_col+1)*sizeof(char));
+                    for(int j=0;j<w.ws_col;j++) 
+                        outputline[j]=' ';
+                    lineflag=0;
+                    for(int j=0;j<ucounter;j++){
+                        for(int v=underline[0][j];v<underline[0][j]+underline[1][j];v++) 
+                            outputline[v] = '^';
+                    }
+                    ucounter=0;
+                    cout << outputline;
+                    free(outputline);
+                }
+                continue;
+            }
+            cout << temp << ' ';
+            temp = strtok(NULL," \t\n");
+            counter++;
+        }
+        cout << endl;
+        free(line);
+        free(temp);
+    }
+    delete(heap);
+    delete(scorelist);  
+    cout << endl;
 }
 
 void df(Trienode* trie)
@@ -86,4 +159,5 @@ int tf(char* token,Trienode* trie)
         return -1;
     }
     cout<<id<<" "<<token2<<" "<<trie->tfsearchword(id,token2,0)<<endl;
+    return 1;
 }
